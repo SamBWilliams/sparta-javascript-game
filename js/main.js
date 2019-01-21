@@ -8,6 +8,7 @@ console.log('working')
 //Upon impact with the platforms, character will accend whilst world decends, score will go up
 //Generate new platforms
 //As score reaches certain point platforms become more scarce
+//If player misses platform, game over
 
 //===Player class===
 //declare image
@@ -30,50 +31,49 @@ var context = canvas.getContext('2d')
 
 
 
-Player = function(x, y, dy, w, h){
+Player = function(x, y, gravity, w, h){
     
     //constructor
     this.x = x;
     this.y = y;
-    this.dy = dy;
+    this.gravity = gravity;
     this.w = w;
     this.h = h;
 
+    // this.jump = function(){//function(plat)
+    //     if (this.y + this.h > canvas.height){ //change canvas to platform
+    //         this.dy = -this.dy;
+    //     } else{
+    //         this.dy += 1;
+    //     }
+    // }
 
-    //movement
-    
+    this.jump = function(){
+        if (this.y + this.h > basePlatform.y){ //change canvas to platform
+            this.gravity = -this.gravity;
+        }
+        //Allows player to jump on platform
+        else if (this.y + this.h > platform.y && this.x >= platform.x && this.x <= platform.x + platform.w){ 
+            
+            this.gravity = -this.gravity;
+        }
+        else{
+            this.gravity += .8;
+        }
 
-    
+        //add jump counter
+    }
 
 
     this.update = function(){
 
-        // var xMovement ={
-        //     37: false,
-        //     39: false
+        // if (basePlatform.Intersects(this)){
+        //     if (this.y < basePlatform.y + basePlatform.w){}
         // }
 
-        // document.addEventListener('keydown', function(e){
-        //     if(e.keyCode in xMovement){
-        //         xMovement[event.keyCode] = true;
-
-        //         if(xMovement[37]){
-        //             this.x -= 20;
-        //         }else if(xMovement[39]){
-        //             this.x += 20;
-        //         }
-        //     }
-        // })
-
-        if (this.y + this.h > canvas.height){ //change canvas to platform
-            this.dy = -this.dy;
-        } else{
-            this.dy += 1;
-        }
-        this.y += this.dy
+        this.jump();
+        this.y += this.gravity
         this.draw();
-
-        //this.y +=1;
     }
 
 
@@ -106,10 +106,14 @@ Platform = function(x,y,w,h){
 
 
 var player;
+var platform;
+var platform2;
+var basePlatform;
 function init(){
-    player = new Player(500, 200, 2, 30, 60)
+    player = new Player(400, 250, 10, 30, 60)
     platform = new Platform(500,500,200,20)
     platform2 = new Platform(800, 300, 200, 20)
+    basePlatform = new Platform(200, 700, 1000, 20)
 }
 
 function animate(){
@@ -119,33 +123,20 @@ function animate(){
     player.update()
     platform.update();
     platform2.update();
+    basePlatform.update();
     
 }
 
-var xMovement ={
-    37: false,
-    39: false
-}
 
-// document.addEventListener('keydown', function(e){
-//     if(e.keyCode in xMovement){
-//         xMovement[event.keyCode] = true;
 
-//         if(xMovement[37]){
-//             player.x -= 10;
-//         }else if(xMovement[39]){
-//             player.x += 10;
-//         }
-//     }
-// })
-
+//=======MOVEMENT=======
 document.addEventListener('keydown', function(e){
     var key_press = String.fromCharCode(event.keyCode);
 
     if(key_press == "A"){
-        player.x -= 10;
+        player.x -= 20;
     } else if(key_press == "D"){
-        player.x += 10;
+        player.x += 20;
     }
 })
 
@@ -156,14 +147,5 @@ animate();
 
 
 
-// var gravity = 3;
 
-
-// //var player = context.fillRect(500, 200, 30, 60)
-// var platform = context.fillRect(500, 500, 200, 20 )
-
-// var Update = setInterval(function(){
-
-//     //player.y +=gravity;
-// })
 
