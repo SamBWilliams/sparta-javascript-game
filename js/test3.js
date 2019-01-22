@@ -13,18 +13,13 @@ var clear = function(){
 };
 
 var Player = new (function (){
-
-    this.image = new Image();
-    this.image.src = "img/angel.png";
     
-    this.width = 65;
-	this.height = 95;
+    this.width = 40;
+	this.height = 70;
 	
 	this.X = 0;
     this.Y = 0;
-    
-   // this.actualFrame = 0;
-	
+
 	this.isJumping = 0;
 	this.isFalling = 0;
 	
@@ -85,17 +80,17 @@ var Player = new (function (){
 		this.jump();
     }
     
-    // that.moveLeft = function(theX) {
-	// 	if((that.X > 0) && that.isMoving) {
-	// 		that.setPosition(theX - that.width/2, that.Y);
-	// 	}
-	// }
+    that.moveLeft = function(theX) {
+		if((that.X > 0) && that.isMoving) {
+			that.setPosition(theX - that.width/2, that.Y);
+		}
+	}
 	
-	// that.moveRight = function(theX) {
-	// 	if((that.X + that.width < width) && that.isMoving) {
-	// 		that.setPosition(theX - that.width/2, that.Y);
-	// 	}
-    // }
+	that.moveRight = function(theX) {
+		if((that.X + that.width < width) && that.isMoving) {
+			that.setPosition(theX - that.width/2, that.Y);
+		}
+    }
     
     this.update = function() {
 
@@ -108,12 +103,114 @@ var Player = new (function (){
 		this.draw();
     }
     
-    that.draw = function(){
+    this.draw = function(){
 
-		ctx.drawImage(that.image, 0, that.height, that.width, that.height,that.X, that.Y, that.width, that.height);
+		ctx.fillRect(this.X, this.Y, this.width, this.height);
 	}
 
 
+})();
+
+var Platform = function(x, y) {
+	
+	this.onCollide = function() {
+		player.fallStop();
+	}
+	
+	
+	this.draw = function() {
+		ctx.fillStyle = 'black';
+		ctx.fillRect(that.X, that.Y, platformWidth, platformHeight);
+	}
+	
+	this.X = x;
+	this.Y = y;
+	
+	return this;
+};
+
+var nrOfPlatforms = 7,
+	platforms = [],
+	platformWidth = 50;
+    platformHeight = 10;
+
+var generatePlatforms = function() {
+    var position = 0 //type;
+        
+    for(var i = 0; i < nrOfPlatforms; i++) {
+            
+        platforms[i] = new Platform(Math.random()*(width-platformWidth), position);
+            
+        if(position < height - platformHeight){
+                position += (height / nrOfPlatforms); 
+        } 
+    }
+}();
+
+    //see if you can arrow this vvv
+
+var checkCollision = function() {
+    platforms.forEach(function(e) {
+        if((player.isFalling) && (player.X < e.X + platformWidth) && (player.Y + player.height > e.Y) &&(player.Y + player.height < e.Y + platformHeight)) {
+            e.onCollide();
+        }
+    })
+}
 
 
-})
+document.onmousemove = function(e) {
+	if(state == 1) {
+		if(player.X + c.offsetLeft > e.pageX - 20) {
+			player.moveLeft(e.pageX - c.offsetLeft);
+		} else if(player.X + c.offsetLeft < e.pageX - 20) {
+			player.moveRight(e.pageX - c.offsetLeft);
+		}
+	}
+};
+
+document.onmousedown = function(e) {
+	if(state == 0) {
+		state = 1;
+	}
+}
+
+player.setPosition(((width - player.width) / 2), ((height - player.height) / 2));
+player.jump();
+
+var GameLoop = function() {
+	clear();
+	
+	platforms.forEach(function(platform){
+		platform.draw();
+	});
+	
+	checkCollision();
+	
+	player.update();
+	if(state){
+		gLoop = setTimeout(GameLoop, 1000 / 50);
+	}
+}
+
+var StartMenu = function() {
+	clear();
+	
+	
+	ctx.font = "20pt Arial";
+	ctx.fillStyle = "Black";
+	ctx.fillText("Click to play", width / 2 - 150, height / 2 - 50);
+	
+	if(state == 2)
+		gLoop = setTimeout(StartMenu, 1000 / 50);
+	else {
+		clearTimeout();
+		GameLoop();
+	}
+}
+
+StartMenu();
+
+
+
+
+    
