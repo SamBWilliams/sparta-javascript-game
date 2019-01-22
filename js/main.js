@@ -31,7 +31,7 @@ var context = canvas.getContext('2d')
 
 
 
-Player = function(x, y, gravity, w, h){
+Player = function(x, y, gravity, w, h, counter, score){
     
     //constructor
     this.x = x;
@@ -40,80 +40,71 @@ Player = function(x, y, gravity, w, h){
     this.w = w;
     this.h = h;
     this.jumpCounter = 15;
+    this.counter = counter;
+    this.gravity += 1;
+    this.score = score;
 
-    // this.jump = function(){//function(plat)
-    //     if (this.y + this.h > canvas.height){ //change canvas to platform
-    //         this.dy = -this.dy;
-    //     } else{
-    //         this.dy += 1;
+
+    // this.jump = function(){
+        
+    //     if (this.y + this.h > basePlatform.y){ //change canvas to platform
+    //         this.gravity = -this.gravity;
     //     }
+    //     //Allows player to jump on platform
+        
+
+    //     //FOR EACH JUMP ADD TO PLATFORM ARRAY TO GENERATE PLATFORM
+        
+
+    //     platformArray.forEach(randomPlatform => {
+            
+    //         if (this.y + this.h > randomPlatform.y && this.x >= randomPlatform.x && this.x <= randomPlatform.x + randomPlatform.w && this.gravity >0.8){ 
+            
+    //             this.gravity = -this.gravity;
+
+    //             platformArray.forEach(randomPlatform =>{
+    //                 randomPlatform.y +=20;
+
+    //             })
+    //             //this.jumpCounter++;
+                
+                
+    //         } else{
+    //             this.gravity += 0.8;
+    //             this.gravity -= 0.7;
+    //             // if(this.y + this.h < randomPlatform.y){}
+    //             //     this.gravity -= 0.8;
+    //             // }
+    //         }
+            
+    //     });
+
+    //     //add jump counter
     // }
 
-    this.jump = function(){
-        if (this.y + this.h > basePlatform.y){ //change canvas to platform
-            this.gravity = -this.gravity;
-        }
-        //Allows player to jump on platform
+
+    this.platformSpawner = function(){
         
-        // for (let i = 0; i < platformArray.length; i++) {
-        //     if (this.y + this.h > platformArray[i].y && this.x >= platformArray[i].x && this.x <= platformArray[i].x + platformArray[i].w){ 
-            
-        //         this.gravity = -this.gravity;
-        //     } else{
-        //         this.gravity += .8;
-        //     }
-            
-        // }
-
-        //game object platform generator
-        // else if (this.y + this.h > randomPlatform.y && this.x >= randomPlatform.x && this.x <= randomPlatform.x + randomPlatform.w){ 
-            
-        //     this.gravity = -this.gravity;
-        // }
-        // else{
-        //     this.gravity += 1;
-        // }
-
-        // else if (this.y + this.h > platFormGenerator().y && this.x >= platFormGenerator().x && this.x <= platFormGenerator().x + platFormGenerator().w){ 
-            
-        //     this.gravity = -this.gravity;
-        // }
-        // else{
-        //     this.gravity += 1;
-        // }
-
-        // else if (this.y + this.h > platformArray[i].y && this.x >= platformArray[i].x && this.x <= platformArray[i].x + platformArray[i].w){ 
-            
-        //     this.gravity = -this.gravity;
-        // }
-        // else{
-        //     this.gravity += 1;
-        // }
-
-        // else if (this.y + this.h > platform.y && this.x >= platform.x && this.x <= platform.x + platform.w){ 
-            
-        //     this.gravity = -this.gravity;
-        // }else if (this.y + this.h > platform2.y && this.x >= platform2.x && this.x <= platform2.x + platform2.w){ 
-            
-        //     this.gravity = -this.gravity;
-        // }
-        // else{
-        //     this.gravity += 1;
-        // }
-
-        //FOR EACH JUMP ADD TO PLATFORM ARRAY TO GENERATE PLATFORM
-
         platformArray.forEach(randomPlatform => {
             
             if (this.y + this.h > randomPlatform.y && this.x >= randomPlatform.x && this.x <= randomPlatform.x + randomPlatform.w && this.gravity >0.8){ 
+                // && this.gravity >0.8
             
                 this.gravity = -this.gravity;
+                this.counter ++;
+                //this.jump();
+
+                platformArray.forEach(randomPlatform =>{
+                    randomPlatform.y +=5;
+
+                })
                 //this.jumpCounter++;
                 
                 
             } else{
                 this.gravity += 0.8;
                 this.gravity -= 0.7;
+                this.score ++;
                 // if(this.y + this.h < randomPlatform.y){}
                 //     this.gravity -= 0.8;
                 // }
@@ -124,11 +115,26 @@ Player = function(x, y, gravity, w, h){
         //add jump counter
     }
 
+    this.gameOver = function(){
+        if(this.y > 800){
+            alert("Game over")
+        }
+    }
+
+    // this.jump = function(){
+    //     this.y += 5;
+    // }
+    
+
+
+
 
     this.update = function(){
-
-        this.jump();
+        //this.gameOver();
+        this.platformSpawner()
+        //this.jump();
         this.y += this.gravity
+        
         this.draw();
     }
 
@@ -161,34 +167,36 @@ Platform = function(x,y,w,h){
     this.update = function(){
 
         this.y +=2;
+
+        // setInterval(function(){
+        //     this.draw(); 
+        // },3000)
         this.draw();
-
-        // if (this.y > 50){
-        //     for (let i = 0; i < 10; i++) {
-        //         ranPlatform = new Platform(x, y, 200, 20)
-                
-        //     }
+        
+        // if (this.y > 800){
+        //     initPlatforms();
         // }
 
-        // for (let i = 0; i < 10; i++) {
-        //     this.draw();
-            
-        // }
         
     }
 
-
-
-
     this.draw = function(){
-        context.fillRect(this.x, this.y, this.w, this.h)
+
+    //     setInterval(function(){
+    //     for (let i = 0; i < platformArray.length; i++) {
+    //         context.fillRect(this.x, this.y, this.w, this.h)
+            
+    //     }  
+    // }, 3000)
+
+    // let x = Math.random() * canvas.height;
+    // let y = Math.random() * canvas.width;
+    // test = new Platform(this.x = x, this.y = y, this.w = 200, this.h = 20) //Constant platform spawn
+
+    context.fillRect(this.x, this.y, this.w, this.h)
 
     }
 }
-
-
-
-
 
 
 var player;
@@ -197,66 +205,38 @@ var platform2;
 var basePlatform;
 var randomPlatform;
 let platformArray = []
+let yArray = [];
 
 function init(){
-    player = new Player(400, 100, 10, 30, 60)
+    player = new Player(400, 200, 10, 30, 60, 0, 0)
     platform = new Platform(500,500,200,20)
     platform2 = new Platform(800, 300, 200, 20)
-    basePlatform = new Platform(200, 700, 1000, 20)
+    basePlatform = new Platform(0, 650, 1000, 20)
 
-    // let gamerunning = true
-
-    // while(gamerunning){
-    //     for (let i = 0; i < 10; i++) {
-    //         let x = Math.random() * canvas.height;
-    //         let y = Math.random() * canvas.width;
-    //         randomPlatform = new Platform(x, y, 200, 20)
-    //  }
-
-    // }
     
      for (let i = 0; i < 15; i++) {
             let x = Math.random() * canvas.height;
             let y = Math.random() * canvas.width;
+           // let y = 
             randomPlatform = new Platform(x, y, 200, 20)
             platformArray.push(randomPlatform)
+            yArray.push(randomPlatform.w)
      }
 
-    //  for (let i = 0; i < 10; i++) {
-    //      platformArray[i] = new Platfrom(x,y,200,20)
-         
-    //  }
-    //     platformArray.push(randomPlatform)
-        
-        
-    // }
     console.log(platformArray)
 }
 
-// function positionGenerator(){
-//     var x = Math.random() * canvas.width
-//     var y = Math.random() * canvas.height
-
-//     return(x ,y);
-// }
-
-// function platFormGenerator(xAxis, yAxis){
-//     positionGenerator();
-//     ranPlatform = new Platform(xAxis, yAxis, 200, 20)
-//     return(ranPlatform);
-    
+// function initPlatforms(){
+//     for (let i = 0; i < 1; i++) {
+//         let x = Math.random() * canvas.height;
+//         let y = Math.random() * canvas.width;
+//        // let y = 
+//         randomPlatform = new Platform(x, y, 200, 20)
+//         platformArray.push(randomPlatform)
+//  }
 // }
 
 
-
-//randomPlatformArray = [];
-
-// for (let i = 0; i < 4; i++) {
-//     var x = Math.random() * window.innerWidth;
-//     var y = Math.random() * window.innerWidth;
-//     randomPlatform2 = new Platform(x, y, 200, 20)
-    
-// }
 
 function animate(){
     requestAnimationFrame(animate);
@@ -266,22 +246,86 @@ function animate(){
     //platform.update();
     //platform2.update();
     basePlatform.update();
-    randomPlatform.update();
+    //randomPlatform.update(); - faster moving platform
     
-
-    for (let i = 0; i < platformArray.length; i++) {
-        platformArray[i].update();
-        
-    }
-    // for (let i = 0; i < 10; i++) {
-    //     randomPlatform.update();
-        
+    // if(player.counter =  3){
+    //     for (let i = 0; i < platformArray.length; i++) {
+    //         platformArray[i].update();
+            
+    //     }
     // }
 
-   // randomPlatform.update();
-    
-    
+    // setInterval(function (){
+    //     test.update();
+    // }, 10000)
+    //test.update();
+
+    // randomPlatform.update()
+    // setInterval(function(){
+    //     for (let i = 0; i < platformArray.length; i++) {
+    //         platformArray[i];
+
+    //         //console.log(platformArray[i])
+            
+            
+    //     }  
+    // }, 3000)
+
+   // console.log(platformArray)
+    //    let num = 0;
+    //    let num2 = 0;
+
+    //    while (num != 2){
+    //        if (player.y =200){
+    //         for (let i = 0; i < platformArray.length; i++) {
+    //             platformArray[i].update();
+    //         }
+    //        }
+            
+    //     }
+
+   //}
+
+//    if (platformArray[0].y > 500){
+    for (let i = 0; i < platformArray.length; i++) {
+        if (player.y === i*600){
+            platformArray.update();
+           }
+
+   }
+
+   
+
+   
+
+//    if (player.y === i*600){
+//     platformArray[i].update();
+//    }
+
+
+
+        // for (let i = 0; i < platformArray.length; i++) {
+        //         platformArray[i].update();
+        // }
+        
+       // platformArray[i].update();
+
+        //requestAnimationFrame(platformSpawner2)
+        
 }
+
+
+    
+    
+
+// var platformSpawner2 = function(){
+//     setInterval(function(){
+//         for (let i = 0; i < platformArray.length; i++) {
+//             platformArray[i].update();
+            
+//         }  
+//     }, 3000)
+// }
 
 
 
@@ -291,14 +335,33 @@ document.addEventListener('keydown', function(e){
 
     if(key_press == "A"){
         player.x -= 50;
+        console.log(platformArray[0])
     } else if(key_press == "D"){
         player.x += 50;
     }
 })
 
-init();
-animate();
+// function maxLength(array){
+//     let x = array[0];
+//     for (let i = 1; i < array.length; i++){
+//         if (array[i] > x){
+//           x = array[i];
+//         }
+//     }
+//     return x
+//   }
+  
+//   maxLength(yArray)
+//   console.log(maxLength(yArray))
 
+
+init();
+//initPlatforms();
+animate();
+// platformSpawner2();
+// maxLength(yArray)
+//   console.log(maxLength(yArray))
+//   console.log(yArray)
 
 
 
