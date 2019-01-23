@@ -10,7 +10,7 @@ var width = 1000,
     gameRunning;
     
     
-    deatSnd = new Audio("sound/0477.mp3")
+    deatSnd = new Audio("sounds/0477.mp3")
 	
 canvas.width = width;
 canvas.height = height;
@@ -29,14 +29,14 @@ var clear = function(){
 var player = new (function(){
 	
 	
-	this.width = 40;
-	this.height = 70;
+	this.width = 20;
+	this.height = 50;
 	
 	this.X = 0;
 	this.Y = 0;
 	
-	this.isJumping = 0;
-	this.isFalling = 0;
+	this.jumping = 0;
+	this.falling = 0;
 	
 	this.jumpSpeed = 0;
 	this.fallSpeed = 0;
@@ -52,9 +52,10 @@ var player = new (function(){
 	
 	//Constant jump
 	this.jump = function() {
-		if(!this.isFalling) {
-			this.isJumping = true;
-			this.jumpSpeed = 22;
+		if(!this.falling) {
+			this.jumping = true;
+            this.jumpSpeed = 22;
+           // points ++;
 
 		}
 	}
@@ -64,20 +65,21 @@ var player = new (function(){
 		if(this.Y > height * 0.25) {
 			this.setPosition(this.X, this.Y - this.jumpSpeed);
 		} else {
-			if(this.jumpSpeed > 10) //points += 100; //revisit
+			if(this.jumpSpeed > 10) //revisit
 			
 			platforms.forEach(function(platform, ind) {
 				platform.Y += platformCaller.jumpSpeed; //Breaker
 				
 				if(platform.Y > height) {
-					platforms[ind] = new Platform(Math.random() * (width - platformWidth), platform.Y - height);
+                    platforms[ind] = new Platform(Math.random() * (width - platformWidth), platform.Y - height);
+                    points ++;
 				}
 			});
 		}
 		
 		this.jumpSpeed--;
 		if(this.jumpSpeed == 0) {
-			this.isFalling = true;
+			this.falling = true;
 		}
 	}
 	
@@ -92,7 +94,7 @@ var player = new (function(){
 	}
 	
 	this.fallStop = function() {
-		this.isFalling = false;
+		this.falling = false;
 		this.fallSpeed = 0;
 		this.jump();
 	}
@@ -111,15 +113,17 @@ var player = new (function(){
 	}
 	
 	this.update = function() {
-		if(this.isJumping) this.checkJump();
-		if(this.isFalling) this.checkFall();
+		if(this.jumping) this.checkJump();
+		if(this.falling) this.checkFall();
 		this.draw();
 	}
 		
 	
 	this.draw = function(){
 
-			context.fillRect(this.X, this.Y, this.width, this.height);
+        context.fillStyle = "red";
+        context.fillRect(this.X, this.Y, this.width, this.height);
+        
 
 	}
 })();
@@ -143,10 +147,14 @@ var Platform = function(x, y) {
 	return this;
 };
 
-var nrOfPlatforms = 5,
+var nrOfPlatforms = 10,
 	platforms = [],
-	platformWidth = 100;
-	platformHeight = 20;
+	platformWidth = 50;
+    platformHeight = 10;
+    
+    // if(points > 20){
+    //     nrOfPlatforms === 2;
+    // }
 
 var generatePlatforms = function() {
 	var position = 0
@@ -161,7 +169,7 @@ var generatePlatforms = function() {
 
 var checkCollision = function() {
 	platforms.forEach(function(e) {
-		if((player.isFalling) &&
+		if((player.falling) &&
            (player.X < e.X + platformWidth) &&
            //(player.X > e.X + platformWidth) &&
            //(player.Y + player.height < e.Y) &&
@@ -211,7 +219,11 @@ var GameLoop = function() {
 	player.update();
 	if(state){
 		gameRunning = setTimeout(GameLoop, 1000 / 50);
-	}
+    }
+    
+    context.font = "20pt Arial";
+	context.fillStyle = "Black";
+	context.fillText("Points: " + points, width / 2 - 500, height / 2 - 250);
 }
 
 var StartMenu = function() {
