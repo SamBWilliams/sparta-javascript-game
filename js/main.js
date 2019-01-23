@@ -335,7 +335,7 @@ document.addEventListener('keydown', function(e){
 
     if(key_press == "A"){
         player.x -= 50;
-        console.log(platformArray[0])
+       // console.log(platformArray[0])
     } else if(key_press == "D"){
         player.x += 50;
     }
