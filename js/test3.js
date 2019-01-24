@@ -14,15 +14,17 @@ var gameLost = false;
 var deatSnd = new Audio("sounds/0477.mp3")
 var jumpSnd = new Audio("sounds/bounce.mp3")
 
+title = new Image();
+title.src = "../img/jump.png";
 
-var buttonW = 150;
-var buttonH = 40;
+playerImg = new Image();
+playerImg.src = "../img/pogo.png"
 	
 canvas.width = width;
 canvas.height = height;
 
 
-//Simplify
+
 var clear = function(){
 	context.fillStyle = background; // Edit
 	context.beginPath();
@@ -35,8 +37,10 @@ var clear = function(){
 var player = new (function(){
 	
 	
-	this.width = 20;
-	this.height = 30;
+	this.width = 70;
+    this.height = 80;
+    
+    this.imgHeight = 126;
 	
 	this.X = 0;
 	this.Y = 0;
@@ -60,20 +64,20 @@ var player = new (function(){
 	this.jump = function() {
 		if(!this.falling) {
 			this.jumping = true;
-            this.jumpSpeed = 22;
+            this.jumpSpeed = 28;
             jumpSnd.play();
 		}
 	}
     
-    //High priority function
+    
 	this.checkJump = function() {
-		if(this.Y > height * 0.25) {
+		if(this.Y > height * 0.30) {
 			this.setPosition(this.X, this.Y - this.jumpSpeed);
 		} else {
 			if(this.jumpSpeed > 10) //revisit
 			
 			platforms.forEach(function(platform, ind) {
-				platform.Y += platformCaller.jumpSpeed; //Breaker
+				platform.Y += platformCaller.jumpSpeed;
 				
 				if(platform.Y > height) {
                     platforms[ind] = new Platform(Math.random() * (width - platformWidth), platform.Y - height);
@@ -104,9 +108,9 @@ var player = new (function(){
 		    }
 	}
 	
-	this.fallStop = function() {
+	this.stopFall = function() {
 		this.falling = false;
-		this.fallSpeed = 0;
+		this.fallSpeed = 10;
 		this.jump();
 	}
 		
@@ -132,9 +136,9 @@ var player = new (function(){
 	
 	this.draw = function(){
 
-        context.fillStyle = "red";
-        context.fillRect(this.X, this.Y, this.width, this.height);
-        
+        // context.fillStyle = "red";
+        // context.fillRect(this.X, this.Y, this.width, this.height);
+        context.drawImage(playerImg, this.X, this.Y, this.width, this.height)
 
 	}
 })();
@@ -142,13 +146,13 @@ var player = new (function(){
 var Platform = function(x, y) {
 	
 	this.onCollide = function() {
-        player.fallStop();
-        // jumpSnd.play();
+        player.stopFall();
+        
 	}
 	
 	
 	this.draw = function() {
-		context.fillStyle = 'black';
+		context.fillStyle = 'darkblue';
 		context.fillRect(this.X, this.Y, platformWidth, platformHeight);
 	}
 	
@@ -159,9 +163,9 @@ var Platform = function(x, y) {
 	return this;
 };
 
-var nrOfPlatforms = 6,
+var nrOfPlatforms = 5,
 	platforms = [],
-	platformWidth = 50;
+	platformWidth = 80;
     platformHeight = 10;
     
     // if(points > 20){
@@ -169,7 +173,7 @@ var nrOfPlatforms = 6,
     // }
 
 var generatePlatforms = function() {
-	var position = 0
+	var position = 0;
 	
 	for(var i = 0; i < nrOfPlatforms; i++) {
 		
@@ -181,8 +185,8 @@ var generatePlatforms = function() {
 
 var checkCollision = function() {
 	platforms.forEach(function(e) {
-        if((player.falling) &&(player.X < e.X + platformWidth) &&(player.Y + player.height > e.Y) &&(player.X > e.X)&&
-        (player.Y + player.height > e.Y + platformHeight)
+        if((player.falling) &&(player.X < e.X + platformWidth)&&(player.X + player.width > e.X)&&
+        (player.Y + player.height > e.Y)
 		  ){
 			e.onCollide();
 		}
@@ -237,13 +241,15 @@ var gameLoop = function() {
 var StartMenu = function() {
     clear();
 
-    context.font = "50pt Arial";
-    context.fillStyle = "Black";
-    context.fillText("Title", width/ 2 - 100, height/ 2 - 0);
+    // context.font = "50pt Arial";
+    // context.fillStyle = "Black";
+    // context.fillText("Title", width/ 2 - 100, height/ 2 - 0);
+
+    context.drawImage(title, width/ 2 - 240, (height/ 2) - 250)
 	
-	context.font = "40pt Arial";
-	context.fillStyle = "Black";
-	context.fillText("Click to play", width / 2 - 150, (height / 2) - -250);
+	context.font = "30pt Arial";
+	context.fillStyle = "green";
+	context.fillText("Click to play", width / 2 - 120, (height / 2) - -250);
 	
 	if(gameState == "mainMenu"){
         gameRunning = setTimeout(StartMenu, 1000 / 50); 
@@ -297,12 +303,6 @@ var gameSt = function(state){
         gameOver();
     }
 
-    //     clear();
-    //     context.font = "20pt Arial";
-	//     context.fillStyle = "Black";
-    //     context.fillText("Click to play", width / 2 - 150, height / 2 - 50);
-        
-    // }
 }
 
 
