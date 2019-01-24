@@ -1,16 +1,17 @@
-var width = 1000,
-	height = 600,
-	canvas = document.getElementById('canvas'),
-	context = document.getElementsByTagName('canvas')[0].getContext('2d'),
+var width = 1000
+var	height = 600
+var	canvas = document.getElementById('canvas')
+var	context = document.getElementsByTagName('canvas')[0].getContext('2d')
 
-	points = 0,
-    state = 2,
+var	points = 0
+var gameState = "mainMenu"
     
-	background = 'white', // Edit 
-    gameRunning;
+var	background = 'white' // Edit 
+var gameRunning;
     
     
-    deatSnd = new Audio("sounds/0477.mp3")
+var deatSnd = new Audio("sounds/0477.mp3")
+var jumpSnd = new Audio("sounds/bounce.mp3")
 	
 canvas.width = width;
 canvas.height = height;
@@ -30,7 +31,7 @@ var player = new (function(){
 	
 	
 	this.width = 20;
-	this.height = 50;
+	this.height = 30;
 	
 	this.X = 0;
 	this.Y = 0;
@@ -55,8 +56,7 @@ var player = new (function(){
 		if(!this.falling) {
 			this.jumping = true;
             this.jumpSpeed = 22;
-           // points ++;
-
+            jumpSnd.play();
 		}
 	}
     
@@ -89,7 +89,11 @@ var player = new (function(){
 			this.fallSpeed++;
 		} else{
                 deatSnd.play();
-                alert("game over") //Edited      
+                // gameState == 2;
+                // StartMenu();
+                //alert("game over") //Edited   
+                gameOver(); 
+               // StartMenu();  
 		    }
 	}
 	
@@ -131,7 +135,8 @@ var player = new (function(){
 var Platform = function(x, y) {
 	
 	this.onCollide = function() {
-		player.fallStop();
+        player.fallStop();
+        // jumpSnd.play();
 	}
 	
 	
@@ -169,15 +174,9 @@ var generatePlatforms = function() {
 
 var checkCollision = function() {
 	platforms.forEach(function(e) {
-		if((player.falling) &&
-           (player.X < e.X + platformWidth) &&
-           //(player.X > e.X + platformWidth) &&
-           //(player.Y + player.height < e.Y) &&
-           (player.Y + player.height > e.Y) &&
-           (player.X > e.X)&&
-           //(player.Y + player.height < e.Y + platformHeight) &&
-           (player.Y + player.height > e.Y + platformHeight)
-		  ) {
+        if((player.falling) &&(player.X < e.X + platformWidth) &&(player.Y + player.height > e.Y) &&(player.X > e.X)&&
+        (player.Y + player.height > e.Y + platformHeight)
+		  ){
 			e.onCollide();
 		}
 	})
@@ -185,29 +184,27 @@ var checkCollision = function() {
 
 //Simplify
 document.onmousemove = function(e) {
-	if(state == 1) {
-		if(player.X + canvas.offsetLeft > e.pageX - 20) {
-			player.moveLeft(e.pageX - canvas.offsetLeft);
-		} else if(player.X + canvas.offsetLeft < e.pageX - 20) {
-			player.moveRight(e.pageX - canvas.offsetLeft);
+	if(gameState == "game") {
+		if(player.X - 20) {
+			player.moveLeft(e.pageX);
+		} else if(player.X - 20) {
+			player.moveRight(e.pageX);
 		}
 	}
 };
 
 
-document.onmousedown = function(e) {
-	if(state == 0) {
-		state = 2;
-	}
-	 if(state == 2) {
-		state = 1;
+document.onmousedown = function() {
+	if(gameState) {
+		gameState = "game";
 	}
 }
 
+// player.setPosition(((width - player.width) / 2), ((height - player.height) / 2));
 player.setPosition(((width - player.width) / 2), ((height - player.height) / 2));
 player.jump();
 
-var GameLoop = function() {
+var gameLoop = function() {
 	clear();
 	
 	platforms.forEach(function(platform){
@@ -217,8 +214,8 @@ var GameLoop = function() {
 	checkCollision();
 	
 	player.update();
-	if(state){
-		gameRunning = setTimeout(GameLoop, 1000 / 50);
+	if(gameState){
+		gameRunning = setTimeout(gameLoop, 1000 / 50);
     }
     
     context.font = "20pt Arial";
@@ -227,18 +224,31 @@ var GameLoop = function() {
 }
 
 var StartMenu = function() {
-	clear();
+    clear();
 	
 	context.font = "20pt Arial";
 	context.fillStyle = "Black";
 	context.fillText("Click to play", width / 2 - 150, height / 2 - 50);
 	
-	if(state == 2){
+	if(gameState == "mainMenu"){
         gameRunning = setTimeout(StartMenu, 1000 / 50); 
     }else {
 		clearTimeout();
-		GameLoop();
+		gameLoop();
 	}
+}
+
+var gameOver = function() {
+	gameState = false;
+	clearTimeout(gameLoop);
+	setTimeout(function() {
+		clear();
+		context.fillStyle = "Black";
+		context.font = "20pt Arial";
+		
+		context.fillText("GAME OVER!", width / 2 - 120, height / 2 - 40);
+		context.fillText("YOU SCORED: " + points + " POINTS", width / 2 - 180, height / 2 - 10);
+	}, 100);
 }
 
 StartMenu();
