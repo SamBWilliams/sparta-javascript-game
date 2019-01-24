@@ -8,10 +8,15 @@ var gameState = "mainMenu"
     
 var	background = 'white' // Edit 
 var gameRunning;
+var gameLost = false;
     
     
 var deatSnd = new Audio("sounds/0477.mp3")
 var jumpSnd = new Audio("sounds/bounce.mp3")
+
+
+var buttonW = 150;
+var buttonH = 40;
 	
 canvas.width = width;
 canvas.height = height;
@@ -92,8 +97,10 @@ var player = new (function(){
                 // gameState == 2;
                 // StartMenu();
                 //alert("game over") //Edited   
-                gameOver(); 
-               // StartMenu();  
+               // gameOver(); 
+               // StartMenu(); 
+            //    gameState == "gameover" 
+                gameSt("gameover")
 		    }
 	}
 	
@@ -152,7 +159,7 @@ var Platform = function(x, y) {
 	return this;
 };
 
-var nrOfPlatforms = 10,
+var nrOfPlatforms = 6,
 	platforms = [],
 	platformWidth = 50;
     platformHeight = 10;
@@ -182,7 +189,7 @@ var checkCollision = function() {
 	})
 }
 
-//Simplify
+
 document.onmousemove = function(e) {
 	if(gameState == "game") {
 		if(player.X - 20) {
@@ -195,9 +202,13 @@ document.onmousemove = function(e) {
 
 
 document.onmousedown = function() {
-	if(gameState) {
-		gameState = "game";
-	}
+	if(gameState == "mainMenu") {
+        gameState = "game";
+       // gameLost = false;
+    }else if(gameState == false){
+        gameState = "mainMenu";
+    }
+   // gameState == "game"
 }
 
 // player.setPosition(((width - player.width) / 2), ((height - player.height) / 2));
@@ -225,10 +236,14 @@ var gameLoop = function() {
 
 var StartMenu = function() {
     clear();
+
+    context.font = "50pt Arial";
+    context.fillStyle = "Black";
+    context.fillText("Title", width/ 2 - 100, height/ 2 - 0);
 	
-	context.font = "20pt Arial";
+	context.font = "40pt Arial";
 	context.fillStyle = "Black";
-	context.fillText("Click to play", width / 2 - 150, height / 2 - 50);
+	context.fillText("Click to play", width / 2 - 150, (height / 2) - -250);
 	
 	if(gameState == "mainMenu"){
         gameRunning = setTimeout(StartMenu, 1000 / 50); 
@@ -239,16 +254,57 @@ var StartMenu = function() {
 }
 
 var gameOver = function() {
-	gameState = false;
-	clearTimeout(gameLoop);
-	setTimeout(function() {
-		clear();
-		context.fillStyle = "Black";
-		context.font = "20pt Arial";
-		
-		context.fillText("GAME OVER!", width / 2 - 120, height / 2 - 40);
-		context.fillText("YOU SCORED: " + points + " POINTS", width / 2 - 180, height / 2 - 10);
-	}, 100);
+	
+     gameState = false;
+     clearTimeout(gameLoop);
+     gameLost = true;
+
+    setTimeout(function() {
+        	clear();
+        	context.fillStyle = "Red";
+        	context.font = "30pt Arial";
+            context.fillText("GAME OVER!", width / 2 - 150, height / 2 - 80);
+
+            context.font = "20pt Arial"
+            context.fillStyle = "Green"
+            context.fillText("YOU SCORED: " + points + " POINTS", width / 2 - 180, height / 2 - 50);
+
+            context.font = "15pt Arial"
+            context.fillStyle = "Black"
+            context.fillText("Press spacebar to restart",width / 2 - 140, height / 2)
+
+            document.addEventListener('keydown', function(e){
+                var key_press = String.fromCharCode(event.keyCode);
+            
+                if(key_press == " "){
+                    clear()
+                    location.reload();
+                   
+                }
+            })
+    
+        }, 100);
+    
+    
 }
 
-StartMenu();
+var gameSt = function(state){
+    if(state == "mainMenu"){
+        clear();
+        StartMenu();
+    }else if(state == "gameover"){
+        clear();
+        gameOver();
+    }
+
+    //     clear();
+    //     context.font = "20pt Arial";
+	//     context.fillStyle = "Black";
+    //     context.fillText("Click to play", width / 2 - 150, height / 2 - 50);
+        
+    // }
+}
+
+
+gameSt(gameState);
+//StartMenu();
