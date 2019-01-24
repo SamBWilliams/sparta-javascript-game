@@ -6,9 +6,14 @@ var	context = document.getElementsByTagName('canvas')[0].getContext('2d')
 var	points = 0
 var gameState = "mainMenu"
     
-var	background = 'white' // Edit 
+var	background = 'lightblue' // Edit 
 var gameRunning;
 var gameLost = false;
+
+var nrOfPlatforms = 5;
+var	platforms = [];
+var	platformWidth = 80;
+var platformHeight = 10;
     
     
 var deatSnd = new Audio("sounds/0477.mp3")
@@ -19,6 +24,7 @@ title.src = "../img/jump.png";
 
 playerImg = new Image();
 playerImg.src = "../img/pogo.png"
+
 	
 canvas.width = width;
 canvas.height = height;
@@ -64,7 +70,7 @@ var player = new (function(){
 	this.jump = function() {
 		if(!this.falling) {
 			this.jumping = true;
-            this.jumpSpeed = 28;
+            this.jumpSpeed = 22;
             jumpSnd.play();
 		}
 	}
@@ -123,7 +129,8 @@ var player = new (function(){
 	
 	this.moveRight = function(theX) {
 		if((this.X + this.width < width) && this.isMoving) {
-			this.setPosition(theX - this.width/2, this.Y);
+            this.setPosition(theX - this.width/2, this.Y);
+            //playerImg.src = "../img/pogoR.png"
 		}
 	}
 	
@@ -144,6 +151,7 @@ var player = new (function(){
 })();
 
 var Platform = function(x, y) {
+
 	
 	this.onCollide = function() {
         player.stopFall();
@@ -158,21 +166,15 @@ var Platform = function(x, y) {
 	
 	
 	this.X = x;
-	this.Y = y;
+	this.Y = y + 50;
 	
 	return this;
 };
 
-var nrOfPlatforms = 5,
-	platforms = [],
-	platformWidth = 80;
-    platformHeight = 10;
-    
-    // if(points > 20){
-    //     nrOfPlatforms === 2;
-    // }
 
 var generatePlatforms = function() {
+
+    //Sets Y position to top of canvas
 	var position = 0;
 	
 	for(var i = 0; i < nrOfPlatforms; i++) {
@@ -183,10 +185,12 @@ var generatePlatforms = function() {
 	}
 }();
 
+
+//Collision detection
 var checkCollision = function() {
 	platforms.forEach(function(e) {
-        if((player.falling) &&(player.X < e.X + platformWidth)&&(player.X + player.width > e.X)&&
-        (player.Y + player.height > e.Y)
+        if((player.falling)&&(player.X + player.width > e.X)&&
+        (player.Y + player.height > e.Y)&&(player.X < e.X + platformWidth)
 		  ){
 			e.onCollide();
 		}
@@ -208,11 +212,11 @@ document.onmousemove = function(e) {
 document.onmousedown = function() {
 	if(gameState == "mainMenu") {
         gameState = "game";
-       // gameLost = false;
+       
     }else if(gameState == false){
         gameState = "mainMenu";
     }
-   // gameState == "game"
+   
 }
 
 // player.setPosition(((width - player.width) / 2), ((height - player.height) / 2));
@@ -241,22 +245,32 @@ var gameLoop = function() {
 var StartMenu = function() {
     clear();
 
-    // context.font = "50pt Arial";
-    // context.fillStyle = "Black";
-    // context.fillText("Title", width/ 2 - 100, height/ 2 - 0);
+    
 
     context.drawImage(title, width/ 2 - 240, (height/ 2) - 250)
 	
 	context.font = "30pt Arial";
 	context.fillStyle = "green";
-	context.fillText("Click to play", width / 2 - 120, (height / 2) - -250);
+    context.fillText("Click anywhere to play", width / 2 - 210, (height / 2) - -60);
+    
+    context.font = "20pt Arial";
+	context.fillStyle = "black";
+    context.fillText("Press 'I' for instructions", width / 2 - 150, (height / 2) - -250);
 	
 	if(gameState == "mainMenu"){
         gameRunning = setTimeout(StartMenu, 1000 / 50); 
     }else {
 		clearTimeout();
 		gameLoop();
-	}
+    }
+    
+    document.addEventListener('keydown', function(){
+        var key_press = String.fromCharCode(event.keyCode);
+        if(key_press == "I"){
+            //  context.fillText("Instructions", width / 2 - 150, (height / 2) - -250)
+            instMenu()
+        }
+    })
 }
 
 var gameOver = function() {
@@ -273,19 +287,17 @@ var gameOver = function() {
 
             context.font = "20pt Arial"
             context.fillStyle = "Green"
-            context.fillText("YOU SCORED: " + points + " POINTS", width / 2 - 180, height / 2 - 50);
+            context.fillText("YOU SCORED: " + points + " POINTS", width / 2 - 185, height / 2 - 35);
 
             context.font = "15pt Arial"
             context.fillStyle = "Black"
-            context.fillText("Press spacebar to restart",width / 2 - 140, height / 2)
+            context.fillText("Press spacebar to restart",width / 2 - 140, height / 2 )
 
             document.addEventListener('keydown', function(e){
                 var key_press = String.fromCharCode(event.keyCode);
-            
                 if(key_press == " "){
                     clear()
-                    location.reload();
-                   
+                    location.reload(); 
                 }
             })
     
@@ -305,6 +317,43 @@ var gameSt = function(state){
 
 }
 
+var instMenu = function(){
+    clear()
+    gameState = false;
+     //clearTimeout(StartMenu);
+    // gameLost = true;
+
+    context.font = "30pt Arial"
+    context.fillStyle = "Black"
+    context.fillText("Welcome to Jump!",width / 2 - 200, (height / 2) - 200)
+
+    context.font = "20pt Arial"
+    context.fillStyle = "Black"
+    context.fillText("1. Use the mouse to move left and right",width / 2 - 270, (height / 2) - 100)
+
+    context.font = "20pt Arial"
+    context.fillStyle = "Black"
+    context.fillText("2. Jump from platform to platform to gain points",width / 2 - 270, (height / 2) - 50)
+
+    context.font = "20pt Arial"
+    context.fillStyle = "Black"
+    context.fillText("3. Don't look down!",width / 2 - 270, (height / 2) - 0)
+
+
+    context.font = "15pt Arial"
+    context.fillStyle = "Black"
+    context.fillText("Press spacebar to go back",width / 2 - 140, (height / 2) - -200)
+
+    document.addEventListener('keydown', function(e){
+        var key_press = String.fromCharCode(event.keyCode);
+        if(key_press == " "){
+            clear()
+            location.reload(); 
+        }
+    })
+
+
+}
+
 
 gameSt(gameState);
-//StartMenu();
