@@ -16,8 +16,9 @@ var	platformWidth = 80;
 var platformHeight = 5;
     
     
-var deatSnd = new Audio("sounds/0477.mp3")
-var jumpSnd = new Audio("sounds/bounce.mp3")
+var deatSnd = new Audio("../sounds/0477.mp3")
+//var deatSnd = new Audio("../sounds/roblox-death-sound_1.mp3")
+var jumpSnd = new Audio("../sounds/bounce.mp3")
 
 title = new Image();
 title.src = "../img/jump.png";
@@ -123,7 +124,9 @@ var player = new (function(){
 	this.moveRight = function(mouseX) {
 		if((this.X + this.width < width) && this.isMoving) {
             this.setPosition(mouseX - this.width/2, this.Y);
-            playerImg.src = "../img/pogoR.png"
+            
+
+                playerImg.src = "../img/pogoR.png"
 		}
 	}
 	
@@ -150,7 +153,7 @@ var Platform = function(x, y) {
 	
 	
 	this.draw = function() {
-		context.fillStyle = 'darkgreen';
+		context.fillStyle = 'darkred';
 		context.fillRect(this.X, this.Y, platformWidth, platformHeight);
 	}
 	
@@ -244,8 +247,8 @@ var StartMenu = function() {
 
     context.drawImage(title, width/ 2 - 240, (height/ 2) - 250)
 	
-	context.font = "30pt Arial";
-	context.fillStyle = "green";
+	context.font = "30pt sans-serif";
+	context.fillStyle = "darkblue";
     context.fillText("Click anywhere to play", width / 2 - 210, (height / 2) - -60);
     
     context.font = "20pt Arial";
@@ -280,7 +283,7 @@ var gameOver = function() {
             context.fillText("GAME OVER!", width / 2 - 150, height / 2 - 80);
 
             context.font = "20pt Arial"
-            context.fillStyle = "Green"
+            context.fillStyle = "green"
             context.fillText("YOU SCORED: " + points + " POINTS", width / 2 - 185, height / 2 - 35);
 
             context.font = "15pt Arial"
@@ -315,7 +318,7 @@ var instMenu = function(){
     clear()
     gameState = false;
 
-    context.font = "30pt Arial"
+    context.font = "30pt Chalkduster"
     context.fillStyle = "Black"
     context.fillText("Welcome to Jump!",width / 2 - 200, (height / 2) - 200)
 
