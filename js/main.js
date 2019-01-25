@@ -6,7 +6,7 @@ var	context = document.getElementsByTagName('canvas')[0].getContext('2d')
 var	points = 0
 var gameState = "mainMenu"
     
-var	background = 'lightblue' // Edit 
+var	background = 'lightblue'
 var gameRunning;
 var gameLost = false;
 
@@ -32,14 +32,13 @@ canvas.height = height;
 
 
 var clear = function(){
-	context.fillStyle = background; // Edit
+	context.fillStyle = background;
 	context.beginPath();
 	context.rect(0,0, width, height);
 	context.closePath();
 	context.fill();
 };
 
-//Change to class poss
 var player = new (function(){
 	
 	
@@ -80,13 +79,13 @@ var player = new (function(){
 		if(this.Y > height * 0.30) {
 			this.setPosition(this.X, this.Y - this.jumpSpeed);
 		} else {
-			if(this.jumpSpeed > 10) //revisit
+			if(this.jumpSpeed > 10)
 			
-			platforms.forEach(function(platform, ind) {
+			platforms.forEach(function(platform, i) {
 				platform.Y += platformCaller.jumpSpeed;
 				
 				if(platform.Y > height) {
-                    platforms[ind] = new Platform(Math.random() * (width - platformWidth), platform.Y - height);
+                    platforms[i] = new Platform(Math.random() * width, platform.Y - height);
                     points ++;
 				}
 			});
@@ -124,7 +123,7 @@ var player = new (function(){
 	this.moveRight = function(mouseX) {
 		if((this.X + this.width < width) && this.isMoving) {
             this.setPosition(mouseX - this.width/2, this.Y);
-            //playerImg.src = "../img/pogoR.png"
+            playerImg.src = "../img/pogoR.png"
 		}
 	}
 	
@@ -136,9 +135,6 @@ var player = new (function(){
 		
 	
 	this.draw = function(){
-
-        // context.fillStyle = "red";
-        // context.fillRect(this.X, this.Y, this.width, this.height);
         context.drawImage(playerImg, this.X, this.Y, this.width, this.height)
 
 	}
@@ -159,7 +155,7 @@ var Platform = function(x, y) {
 	}
 	
 	
-	this.X = x;
+	this.X = x + 10;
 	this.Y = y + 50;
 	
 	return this;
@@ -175,7 +171,11 @@ var generatePlatforms = function() {
 		
 		platforms[i] = new Platform(Math.random()*(width-platformWidth), position);
 		
-		if(position < height - platformHeight) position += (height / nrOfPlatforms);
+        if(position < height - platformHeight) position += (height / nrOfPlatforms);
+        
+        // if(points > 20){
+        //     nrOfPlatforms == 3;
+        // }
 	}
 }();
 
@@ -197,7 +197,9 @@ document.onmousemove = function(e) {
 		if(player.X - 10) {
 			player.moveLeft(e.pageX);
 		} else if(player.X - 10) {
-			player.moveRight(e.pageX);
+            playerImg.src = "../img/pogoR.png"
+            player.moveRight(e.pageX);
+            playerImg.src = "../img/pogoR.png"
 		}
 	}
 };
@@ -213,7 +215,6 @@ document.onmousedown = function() {
    
 }
 
-// player.setPosition(((width - player.width) / 2), ((height - player.height) / 2));
 player.setPosition(((width - player.width) / 2), ((height - player.height) / 2));
 player.jump();
 
@@ -261,7 +262,6 @@ var StartMenu = function() {
     document.addEventListener('keydown', function(){
         var key_press = String.fromCharCode(event.keyCode);
         if(key_press == "I"){
-            //  context.fillText("Instructions", width / 2 - 150, (height / 2) - -250)
             instMenu()
         }
     })
@@ -314,8 +314,6 @@ var gameSt = function(state){
 var instMenu = function(){
     clear()
     gameState = false;
-     //clearTimeout(StartMenu);
-    // gameLost = true;
 
     context.font = "30pt Arial"
     context.fillStyle = "Black"
