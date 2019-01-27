@@ -17,14 +17,14 @@ var	platformWidth = 80;
 var platformHeight = 5;
     
     
-var deatSnd = new Audio("../sounds/0477.mp3")
-var jumpSnd = new Audio("../sounds/bounce.mp3")
+var deatSnd = new Audio("sounds/0477.mp3")
+var jumpSnd = new Audio("sounds/bounce.mp3")
 
 title = new Image();
-title.src = "../img/jump.png";
+title.src = "img/jump.png";
 
 playerImg = new Image();
-playerImg.src = "../img/pogo.png"
+playerImg.src = "img/pogo.png"
 
 	
 canvas.width = width;
