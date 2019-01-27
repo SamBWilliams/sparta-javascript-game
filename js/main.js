@@ -1,3 +1,4 @@
+//===Global variables===
 var width = 1000
 var	height = 600
 var	canvas = document.getElementById('canvas')
@@ -17,7 +18,6 @@ var platformHeight = 5;
     
     
 var deatSnd = new Audio("../sounds/0477.mp3")
-//var deatSnd = new Audio("../sounds/roblox-death-sound_1.mp3")
 var jumpSnd = new Audio("../sounds/bounce.mp3")
 
 title = new Image();
@@ -31,7 +31,7 @@ canvas.width = width;
 canvas.height = height;
 
 
-
+//Clears canvas
 var clear = function(){
 	context.fillStyle = background;
 	context.beginPath();
@@ -40,6 +40,8 @@ var clear = function(){
 	context.fill();
 };
 
+
+//===Player class===
 var player = new (function(){
 	
 	
@@ -75,7 +77,7 @@ var player = new (function(){
 		}
 	}
     
-    
+    //Checks to see if player is jumping
 	this.checkJump = function() {
 		if(this.Y > height * 0.30) {
 			this.setPosition(this.X, this.Y - this.jumpSpeed);
@@ -97,7 +99,7 @@ var player = new (function(){
 			this.falling = true;
 		}
 	}
-	
+	//Checks to see if player is falling
 	this.checkFall = function() {
 		if(this.Y < height - this.height) {
 			this.setPosition(this.X, this.Y + this.fallSpeed);
@@ -107,14 +109,15 @@ var player = new (function(){
                 gameSt("gameover")
 		    }
 	}
-	
+    
+    //Jumps on impact of platforms
 	this.stopFall = function() {
 		this.falling = false;
 		this.fallSpeed = 10;
 		this.jump();
 	}
 		
-	
+	//Movement of player
 	this.moveLeft = function(mouseX) {
 		if((this.X > 0) && this.isMoving) {
 			this.setPosition(mouseX - this.width/2, this.Y);
@@ -129,42 +132,45 @@ var player = new (function(){
                 playerImg.src = "../img/pogoR.png"
 		}
 	}
-	
+    
+    //Updates animation of player
 	this.update = function() {
 		if(this.jumping) this.checkJump();
 		if(this.falling) this.checkFall();
 		this.draw();
 	}
 		
-	
+	//Draws player on screen
 	this.draw = function(){
         context.drawImage(playerImg, this.X, this.Y, this.width, this.height)
 
 	}
 })();
 
+
+//===Platform class===
 var Platform = function(x, y) {
 
-	
+	//Calls to stopFall function in player class
 	this.onCollide = function() {
         player.stopFall();
         
 	}
 	
-	
+	//Draws platforms on screen
 	this.draw = function() {
 		context.fillStyle = 'darkred';
 		context.fillRect(this.X, this.Y, platformWidth, platformHeight);
 	}
 	
-	
+	//Alters platform position
 	this.X = x + 10;
 	this.Y = y + 50;
 	
 	return this;
 };
 
-
+//Generates platforms
 var generatePlatforms = function() {
 
     //Sets Y position to top of canvas
@@ -176,9 +182,6 @@ var generatePlatforms = function() {
 		
         if(position < height - platformHeight) position += (height / nrOfPlatforms);
         
-        // if(points > 20){
-        //     nrOfPlatforms == 3;
-        // }
 	}
 }();
 
@@ -194,7 +197,7 @@ var checkCollision = function() {
 	})
 }
 
-
+//Detects mouse movement
 document.onmousemove = function(e) {
 	if(gameState == "game") {
 		if(player.X - 10) {
@@ -207,7 +210,7 @@ document.onmousemove = function(e) {
 	}
 };
 
-
+//Provides click detection for starting game
 document.onmousedown = function() {
 	if(gameState == "mainMenu") {
         gameState = "game";
@@ -218,9 +221,12 @@ document.onmousedown = function() {
    
 }
 
+//Sets initial player position and jump function
 player.setPosition(((width - player.width) / 2), ((height - player.height) / 2));
 player.jump();
 
+
+//==Main game is played===
 var gameLoop = function() {
 	clear();
 	
@@ -240,6 +246,8 @@ var gameLoop = function() {
 	context.fillText("Points: " + points, width / 2 - 500, height / 2 - 250);
 }
 
+
+//===Opening menu===
 var StartMenu = function() {
     clear();
 
@@ -270,6 +278,7 @@ var StartMenu = function() {
     })
 }
 
+//===Game over screen===
 var gameOver = function() {
 	
      gameState = false;
@@ -303,6 +312,7 @@ var gameOver = function() {
     
 }
 
+//===Changes game state===
 var gameSt = function(state){
     if(state == "mainMenu"){
         clear();
@@ -314,6 +324,7 @@ var gameSt = function(state){
 
 }
 
+//===Displays game information===
 var instMenu = function(){
     clear()
     gameState = false;
@@ -350,5 +361,5 @@ var instMenu = function(){
 
 }
 
-
+//===Initiates game===
 gameSt(gameState);
