@@ -12,6 +12,10 @@ Copy the url: 'git@github.com:SamBWilliams/sparta-javascript-game.git'.
 In your console use the command 'git clone git@github.com:SamBWilliams/sparta-javascript-game.git'.
 You will now be able to open the game in a text editor of your choice.
 
+# Github pages link
+
+https://sambwilliams.github.io/sparta-javascript-game/
+
 #--Built with--
 HTML
 CSS
